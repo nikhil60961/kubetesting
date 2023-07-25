@@ -24,7 +24,7 @@ spec:
     spec:
      containers:
         - name: simplewebpage
-          image: nikhil609651/simplewebpage
+          image: nikhil609651/simplewebpage:v1
           ports:
             - containerPort: 8080
       
