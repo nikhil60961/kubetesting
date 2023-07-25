@@ -1,57 +1,68 @@
+# namespace-nginx.yaml
 apiVersion: v1
-kind: List
-items:
-  - apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-      name: simplewebpage-deployment
-    spec:
-      replicas: 2
-      selector:
-        matchLabels:
-          app: simplewebpage
-      template:
-        metadata:
-          labels:
-            app: simplewebpage
-        spec:
-          containers:
-            - name: simplewebpage
-              image: nikhil609651/simplewebpage
-              ports:
-                - containerPort: 80
-      # Set the default namespace to "nginx" for resources in this file
-      defaultNamespace: nginx
+kind: Namespace
+metadata:
+  name: nginx
 
-  - apiVersion: v1
-    kind: Service
+---
+
+# simplewebpage-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simplewebpage-deployment
+  namespace: nginx   # Deploy the Deployment in the "nginx" namespace
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: simplewebpage
+  template:
     metadata:
-      name: simplewebpage-service
-    spec:
-      selector:
+      labels:
         app: simplewebpage
-      ports:
-        - protocol: TCP
-          port: 80
-          targetPort: 80
-      # Set the default namespace to "nginx" for resources in this file
-      defaultNamespace: nginx
-
-  - apiVersion: networking.k8s.io/v1
-    kind: Ingress
-    metadata:
-      name: simplewebpage-ingress
     spec:
-      rules:
-        - host: simplewebpage.example.com   # Replace with your desired host/domain name
-          http:
-            paths:
-              - path: /
-                pathType: Prefix
-                backend:
-                  service:
-                    name: simplewebpage-service
-                    port:
-                      number: 80
-      # Set the default namespace to "nginx" for resources in this file
-      defaultNamespace: nginx
+    containers:
+        - name: simplewebpage
+          image: nikhil609651/simplewebpage
+          ports:
+            - containerPort: 8080
+
+---
+
+# simplewebpage-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: simplewebpage-service
+  namespace: nginx   # Create the Service in the "nginx" namespace
+spec:
+  type: LoadBalancer
+  selector:
+    app: simplewebpage
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+
+---
+
+# simplewebpage-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simplewebpage-ingress
+  namespace: nginx   # Create the Ingress in the "nginx" namespace
+spec:
+  rules:
+    - host: simplewebpage.example.com   # Replace with your desired host/domain name
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: simplewebpage-service
+                port:
+                  number: 80
+ 
