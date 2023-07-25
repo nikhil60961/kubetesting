@@ -24,18 +24,19 @@ items:
       # Set the default namespace to "nginx" for resources in this file
       defaultNamespace: nginx
 
-  - apiVersion: v1
-    kind: Service
-    metadata:
-      name: simplewebpage-service
-    spec:
-      selector:
-        app: simplewebpage
-      ports:
-        - protocol: TCP
-          port: 80
-          targetPort: 80
-      # Set the default namespace to "nginx" for resources in this file
+# simplewebpage-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: simplewebpage-service
+spec:
+  selector:
+    app: simplewebpage
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer   # Add this line to specify the service type as LoadBalancer
       defaultNamespace: nginx
 
   - apiVersion: networking.k8s.io/v1
