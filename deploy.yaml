@@ -22,7 +22,7 @@ spec:
       labels:
         app: simplewebpage
     spec:
-    containers:
+     containers:
         - name: simplewebpage
           image: nikhil609651/simplewebpage
           ports:
